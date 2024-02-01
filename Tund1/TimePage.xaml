@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Tund1.TimePage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label
+                x:Name = "lbl_click"
+                Text="Vajuta siia!"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" 
+                BackgroundColor="White"
+                TextColor="Black"
+                WidthRequest="400"
+                FontSize="20"
+                HorizontalTextAlignment="Center"
+                >
+                
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Button 
+                x:Name="btn_Timer"
+                Text="Näita kellaaeg"
+                FontSize="Medium"
+                Clicked="Timer_Clicked"
+                />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
