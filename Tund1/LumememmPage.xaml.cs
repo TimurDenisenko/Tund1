@@ -61,11 +61,12 @@ namespace Tund1
             isVisible.Clicked+=IsVisible_Clicked;
             randomColor = new Button
             {
-                BackgroundColor = Color.White,
+                BackgroundColor = Color.Black,
                 WidthRequest= 100,
                 HeightRequest= 50,
                 Text = "Random color",
             };
+            randomColor.Clicked+=RandomColor_Clicked;
             StackLayout st = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
@@ -85,6 +86,34 @@ namespace Tund1
             };
             Content = new StackLayout { Children = {st,st1,st2} };
         }
+
+        private void RandomColor_Clicked(object sender, EventArgs e)
+        {
+            int r = (int)bucket.BackgroundColor.R;
+            int g = (int)bucket.BackgroundColor.G;
+            int b = (int)bucket.BackgroundColor.B;
+        }
+        //private void ToColor(BoxView box, int color, int toColor)
+        //{
+        //    Device.BeginInvokeOnMainThread(async () =>
+        //    {
+        //        if (color> toColor)
+        //        {
+        //            for (; color > toColor; color--)
+        //            {
+        //                await Task.Delay(10);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            for (; color < toColor; color++)
+        //            {
+        //                box.BackgroundColor()
+        //                await Task.Delay(10);
+        //            }
+        //        }
+        //    });
+        //}
 
         private void IsVisible_Clicked(object sender, EventArgs e)
         {
