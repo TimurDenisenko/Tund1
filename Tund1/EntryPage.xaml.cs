@@ -18,6 +18,7 @@ namespace Tund1
         Editor ed;
         public EntryPage()
         {
+            Title = "Entry Leht";
             #region Элементы
             btn_Start = new Button
             {

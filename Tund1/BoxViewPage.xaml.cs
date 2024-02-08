@@ -18,6 +18,8 @@ namespace Tund1
         bool t = false;
         public BoxViewPage()
         {
+            Title = "BoxView Leht";
+
             box = new BoxView { 
                 Color= Color.FromRgb(r,g,b),
                 CornerRadius = 10,

@@ -21,6 +21,7 @@ namespace Tund1
         public TimePage()
         {
             InitializeComponent();
+            Title = "Time Leht";
         }
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
