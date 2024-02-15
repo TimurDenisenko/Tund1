@@ -13,7 +13,8 @@ namespace Tund1
     public partial class StartPage2 : ContentPage
     {
         StackLayout st;
-        List<ContentPage> pages = new List<ContentPage>() { new EntryPage(), new BoxViewPage(), new TimePage(), new DateTimePage(), new StepperSliderPage(), new ColorSlider(), new LumememmPage() };
+        List<ContentPage> pages = new List<ContentPage>() { new EntryPage(), new BoxViewPage(), new TimePage(), new DateTimePage(), 
+            new StepperSliderPage(), new ColorSlider(), new LumememmPage(), new FramePage(), new TripsTrapsTrull() };
         Button btn;
         public StartPage2()
         {

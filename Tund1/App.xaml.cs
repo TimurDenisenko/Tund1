@@ -10,7 +10,7 @@ namespace Tund1
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new LumememmPage());
+            MainPage = new NavigationPage(new StartPage2());
         }
 
         protected override void OnStart()
