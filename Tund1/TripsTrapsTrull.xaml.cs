@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -14,10 +13,16 @@ namespace Tund1
     {
         Grid grid;
         Frame fr;
-        bool x = true;
+        bool x = true, withBot = true;
         int[,] xo;
         Button newGame;
         Button changeBackground;
+        Button changePlayer1;
+        Button changePlayer2;
+        Button gameMode;
+        TapGestureRecognizer tap;
+        ColorTypeConverter converter = new ColorTypeConverter();
+        Color p1 = Color.Red, p2 = Color.Blue;
         public TripsTrapsTrull()
         {
             Title = "Trips Traps Trull Page";
@@ -26,38 +31,88 @@ namespace Tund1
                 WidthRequest = 200,
                 HeightRequest = 200,
             };
-            TapGestureRecognizer tap = new TapGestureRecognizer();
+            tap = new TapGestureRecognizer();
             tap.Tapped+=Tap_Tapped;
+            newGame = new Button
+            {
+                WidthRequest = 100,
+                HeightRequest = 50,
+                Text = "New game",
+            };
+            newGame.Clicked += NewGame_Clicked;
+            changeBackground = new Button
+            {
+                WidthRequest = 100,
+                HeightRequest = 50,
+                Text = "Change background color",
+            };
+            changeBackground.Clicked += ChangeBackground_Clicked;
+            changePlayer1 = new Button
+            {
+                WidthRequest = 100,
+                HeightRequest = 50,
+                Text = "Change X color",
+            };
+            changePlayer1.Clicked += ChangePlayer1_Clicked;
+            changePlayer2 = new Button
+            {
+                WidthRequest = 100,
+                HeightRequest = 50,
+                Text = "Change O color",
+            };
+            changePlayer2.Clicked += ChangePlayer2_Clicked;
+            grid.Children.Add(new Frame { BackgroundColor = Color.Transparent }, 0, 6);
+            grid.Children.Add(newGame, 0, 3);
+            grid.Children.Add(changeBackground, 0, 4);
+            grid.Children.Add(changePlayer1, 1, 4);
+            grid.Children.Add(changePlayer2, 2, 4);
+            StartGame();
+            Content = grid;
+        }
+
+        private void ChangePlayer2_Clicked(object sender, EventArgs e)
+        {
+            ChangeColor("O", p2, p1);
+        }
+
+        private void ChangePlayer1_Clicked(object sender, EventArgs e)
+        {
+            ChangeColor("X", p1, p2);
+        }
+
+        private async void ChangeColor(string name, Color primary, Color secondary)
+        {
+            try
+            {
+                string result = await DisplayPromptAsync("Change "+name+"color", "Color");
+                if ((Color)converter.ConvertFromInvariantString(result) == secondary)
+                {
+                    Color temp = primary;
+                    primary = secondary;
+                    secondary = temp;
+                }
+                else
+                    primary = (Color)converter.ConvertFromInvariantString(result);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        private void StartGame()
+        {
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
                     grid.Children.Add(
-                    fr = new Frame { BackgroundColor = Color.White}, i, j
+                    fr = new Frame { BackgroundColor = Color.White }, i, j
                     );
-                    fr.GestureRecognizers.Add( tap );
+                    fr.GestureRecognizers.Add(tap);
                 }
             }
-            newGame = new Button
-            {
-                WidthRequest= 100,
-                HeightRequest= 50,
-                Text = "New game",
-            };
-            newGame.Clicked+=NewGame_Clicked;
-            changeBackground = new Button
-            {
-                WidthRequest= 100,
-                HeightRequest= 50,
-                Text = "Change background color",
-            };
-            changeBackground.Clicked+=ChangeBackground_Clicked;
-            grid.Children.Add(new Frame { BackgroundColor = Color.Transparent},0,6);
-            grid.Children.Add(newGame, 0, 3);
-            grid.Children.Add(changeBackground, 1, 3);
             xo = new int[3, 3];
-            Content = grid;
-
         }
 
         private async void ChangeBackground_Clicked(object sender, EventArgs e)
@@ -92,13 +147,34 @@ namespace Tund1
                     fr.BackgroundColor = Color.Red;
                     xo[r, c] = 1;
                     CheckWin(3);
-                    break;
+                    x = !x;
+                    if (withBot)
+                    {
+                        BotGame();
+                    }
+                    return;
                 case false:
                     fr.BackgroundColor = Color.Blue;
                     xo[r, c] = 4;
                     CheckWin(12);
-                    break;
+                    x = !x;
+                    return;
             }
+        }
+
+        private void BotGame()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (xo[i,j]==0)
+                    {
+                        grid.Children.Add(new Frame() { BackgroundColor = Color.Blue}, i,j);
+                    }
+                }
+            }
+            CheckWin(12);
             x = !x;
         }
 
@@ -133,14 +209,13 @@ namespace Tund1
             switch (res)
             {
                 case 3:
-                    await DisplayAlert("End", "Red win", "OK");
+                    await DisplayAlert("End", p1+" win", "OK");
                     break;
                 case 12:
-                    await DisplayAlert("End", "Blue win", "OK");
+                    await DisplayAlert("End", p2+" win", "OK");
                     break;
             }
-            Navigation.RemovePage(this);
-            await Navigation.PushAsync(new TripsTrapsTrull());
+            StartGame();
         }
     }
 }
