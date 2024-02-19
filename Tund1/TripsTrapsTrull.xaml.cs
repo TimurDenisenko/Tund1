@@ -13,7 +13,7 @@ namespace Tund1
     {
         Grid grid;
         Frame fr;
-        bool x = true, withBot = true;
+        bool x = true, withBot = false;
         int[,] xo;
         Button newGame;
         Button changeBackground;
@@ -37,62 +37,118 @@ namespace Tund1
             {
                 WidthRequest = 100,
                 HeightRequest = 50,
-                Text = "New game",
+                Text = "Uus mäng",
             };
             newGame.Clicked += NewGame_Clicked;
             changeBackground = new Button
             {
                 WidthRequest = 100,
                 HeightRequest = 50,
-                Text = "Change background color",
+                Text = "Muutke taustavärvi",
             };
             changeBackground.Clicked += ChangeBackground_Clicked;
             changePlayer1 = new Button
             {
                 WidthRequest = 100,
                 HeightRequest = 50,
-                Text = "Change X color",
+                Text = "Muuda X värvi",
             };
             changePlayer1.Clicked += ChangePlayer1_Clicked;
             changePlayer2 = new Button
             {
                 WidthRequest = 100,
                 HeightRequest = 50,
-                Text = "Change O color",
+                Text = "Muuda O värvi",
             };
             changePlayer2.Clicked += ChangePlayer2_Clicked;
+            gameMode = new Button
+            {
+                WidthRequest = 100,
+                HeightRequest = 50,
+                Text = "Muuda mängurežiimi",
+            };
+            gameMode.Clicked+=GameMode_Clicked;
             grid.Children.Add(new Frame { BackgroundColor = Color.Transparent }, 0, 6);
-            grid.Children.Add(newGame, 0, 3);
-            grid.Children.Add(changeBackground, 0, 4);
-            grid.Children.Add(changePlayer1, 1, 4);
-            grid.Children.Add(changePlayer2, 2, 4);
-            StartGame();
+            grid.Children.Add(newGame, 0, 10);
+            grid.Children.Add(gameMode, 1, 10);
+            grid.Children.Add(changeBackground, 0, 11);
+            grid.Children.Add(changePlayer1, 1, 11);
+            grid.Children.Add(changePlayer2, 2, 11);
+            StartGame(9);
             Content = grid;
+        }
+
+        private async void GameMode_Clicked(object sender, EventArgs e)
+        {
+            string action = await DisplayActionSheet("Mängurežiimi", "Tühista", null, "Vaikimisi", "Bot");
+            switch (action)
+            {
+                case "Vaikimisi":
+                    withBot = false;
+                    break;
+                case "Bot":
+                    withBot = true;
+                    break;
+            }
+            StartGame();
         }
 
         private void ChangePlayer2_Clicked(object sender, EventArgs e)
         {
-            ChangeColor("O", p2, p1);
+            ChangeColor2();
+            StartGame();
         }
 
         private void ChangePlayer1_Clicked(object sender, EventArgs e)
         {
-            ChangeColor("X", p1, p2);
+            ChangeColor1();
+            StartGame();
         }
 
-        private async void ChangeColor(string name, Color primary, Color secondary)
+        private async void ChangeColor1()
         {
             try
             {
-                string result = await DisplayPromptAsync("Change "+name+"color", "Color");
-                if ((Color)converter.ConvertFromInvariantString(result) == secondary)
+                string result = await DisplayPromptAsync("Muuda X värvi", "Värv");
+                if ((Color)converter.ConvertFromInvariantString(result) == p2)
                 {
-                    Color temp = primary;
-                    primary = secondary;
-                    secondary = temp;
+                    Color temp = p1;
+                    p1 = p2;
+                    p2 = temp;
                 }
                 else
-                    primary = (Color)converter.ConvertFromInvariantString(result);
+                {
+                    if ((Color)converter.ConvertFromInvariantString(result)==Color.White)
+                    {
+                        return;
+                    }
+                    p1 = (Color)converter.ConvertFromInvariantString(result);
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+        private async void ChangeColor2()
+        {
+            try
+            {
+                string result = await DisplayPromptAsync("Muuda O värvi", "Värv");
+                if ((Color)converter.ConvertFromInvariantString(result) == p1)
+                {
+                    Color temp = p2;
+                    p2 = p1;
+                    p1 = temp;
+                }
+                else
+                {
+                    if ((Color)converter.ConvertFromInvariantString(result)==Color.White)
+                    {
+                        return;
+                    }
+                    p2 = (Color)converter.ConvertFromInvariantString(result);
+                }
             }
             catch (Exception)
             {
@@ -100,11 +156,11 @@ namespace Tund1
             }
         }
 
-        private void StartGame()
+        private void StartGame(int n = 3)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < n; j++)
                 {
                     grid.Children.Add(
                     fr = new Frame { BackgroundColor = Color.White }, i, j
@@ -112,14 +168,14 @@ namespace Tund1
                     fr.GestureRecognizers.Add(tap);
                 }
             }
-            xo = new int[3, 3];
+            xo = new int[n,n];
         }
 
         private async void ChangeBackground_Clicked(object sender, EventArgs e)
         {
             try
             {
-                string result = await DisplayPromptAsync("Change background color", "Color");
+                string result = await DisplayPromptAsync("Muutke taustavärvi", "Värv");
                 ColorTypeConverter converter = new ColorTypeConverter();
                 BackgroundColor = (Color)converter.ConvertFromInvariantString(result);
             }
@@ -144,21 +200,21 @@ namespace Tund1
             switch (x)
             {
                 case true:
-                    fr.BackgroundColor = Color.Red;
+                    fr.BackgroundColor = p1;
                     xo[r, c] = 1;
-                    CheckWin(3);
+                    CheckWinN(9,9);
                     x = !x;
                     if (withBot)
                     {
                         BotGame();
                     }
-                    return;
+                    break;
                 case false:
-                    fr.BackgroundColor = Color.Blue;
-                    xo[r, c] = 4;
-                    CheckWin(12);
+                    fr.BackgroundColor = p2;
+                    xo[r, c] = 10;
+                    CheckWinN(90,10);
                     x = !x;
-                    return;
+                    break;
             }
         }
 
@@ -166,16 +222,140 @@ namespace Tund1
         {
             for (int i = 0; i < 3; i++)
             {
-                for (int j = 0; j < 3; j++)
+                if ((xo[i, 0]+xo[i, 1]+xo[i, 2])==2)
                 {
-                    if (xo[i,j]==0)
+                    for (int j = 0; j < 3; j++)
                     {
-                        grid.Children.Add(new Frame() { BackgroundColor = Color.Blue}, i,j);
+                        if (xo[i, j]==0)
+                        {
+                            grid.Children.Add(new Frame() { BackgroundColor = p2 }, j, i);
+                            x = !x;
+                            xo[i, j] = 4;
+                            CheckWin(12);
+                            return;
+                        }
+                    }
+                }
+                if ((xo[0, i]+xo[1, i]+xo[2, i])==2)
+                {
+                    for (int o = 0; o < 3; o++)
+                    {
+                        if (xo[o,i]==0)
+                        {
+                            grid.Children.Add(new Frame() { BackgroundColor = p2 }, i,o);
+                            x = !x;
+                            xo[o,i] = 4;
+                            CheckWin(12);
+                            return;
+                        }
                     }
                 }
             }
-            CheckWin(12);
-            x = !x;
+            if ((xo[0, 0]+xo[1, 1]+xo[2, 2])==2)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (xo[j, j]==0)
+                    {
+                        grid.Children.Add(new Frame() { BackgroundColor = p2 }, j, j);
+                        x = !x;
+                        xo[j, j] = 4;
+                        CheckWin(12);
+                        return;
+                    }
+                }
+            }
+            if ((xo[0, 2]+xo[1, 1]+xo[2, 0])==2)
+            {
+                for (int o = 2; o > 1; o--)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (xo[j, o]==0)
+                        {
+                            grid.Children.Add(new Frame() { BackgroundColor = p2 }, o, j);
+                            x = !x;
+                            xo[j, o] = 4;
+                            CheckWin(12);
+                            return;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                int rand1 = new Random().Next(3);
+                int rand2 = new Random().Next(3); 
+                if (xo[rand1,rand2]==0)
+                {
+                    grid.Children.Add(new Frame() { BackgroundColor = p2 }, rand2, rand1);
+                    x = !x;
+                    xo[rand1,rand2] = 4;
+                    CheckWin(12);
+                    return;
+                }
+            }
+        }
+
+        private void CheckWinN(int res, int n)
+        {
+            #region PRoverka1
+            int sum = 0;
+            for (int i = 0; i < n-1; i++)
+            {
+                sum = 0;
+                int sum1 = 0;
+                for (int j = 0; j < n-1; j++)
+                {
+                    sum += xo[i,j];
+                    sum1 += xo[j, i];
+                }
+                if (sum==res)
+                {
+                    EndGameN(res, n);
+                    return;
+                }
+                if (sum1==res)
+                {
+                    EndGameN(res, n);
+                    return;
+                }
+            }
+            #endregion
+
+            #region proverka2
+            sum = 0;
+            for (int i = 0; i < n - 1; i++)
+            {
+                sum+= xo[i,i];
+            }
+            if (sum==res)
+            {
+                EndGameN(res, n);
+                return;
+            }
+            #endregion
+
+            sum = 0;
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 0; j < n - 1; j++)
+                {
+                    sum+= xo[i,j];
+                }
+            }
+        }
+        private async void EndGameN(int res, int n)
+        {
+            if (res==n)
+            {
+                await DisplayAlert("Lõpp", "P1 võit", "OK");
+            }
+            else if (res==((n+1)*n))
+            {
+                await DisplayAlert("Lõpp", "P2 võit", "OK");
+            }
+            StartGame();
         }
 
         private void CheckWin(int res)
@@ -193,7 +373,7 @@ namespace Tund1
                     return;
                 }
             }
-            if ((xo[0, 0]+xo[1, 1]+xo[2, 2])==res)
+            if ((xo[0,0]+xo[1, 1]+xo[2, 2])==res)
             {
                 EndGame(res);
                 return;
@@ -203,19 +383,28 @@ namespace Tund1
                 EndGame(res);
                 return;
             }
+            if (xo[0,0]!=0 && xo[0, 1]!=0 && xo[0, 2]!=0 && xo[1, 0]!=0 && xo[1, 1]!=0 && xo[1, 2]!=0
+                &&xo[2, 0]!=0&&xo[2, 1]!=0&&xo[2, 2]!=0)
+            {
+                EndGame(1);
+                return; 
+            }
         }
         private async void EndGame(int res)
         {
             switch (res)
             {
+                case 1:
+                    await DisplayAlert("Lõpp", "Võitjaid pole", "OK");
+                    break;
                 case 3:
-                    await DisplayAlert("End", p1+" win", "OK");
+                    await DisplayAlert("Lõpp", "P1 võit", "OK");
                     break;
                 case 12:
-                    await DisplayAlert("End", p2+" win", "OK");
+                    await DisplayAlert("Lõpp", "P1 võit", "OK");
                     break;
             }
-            StartGame();
+            StartGame(9);
         }
     }
 }
