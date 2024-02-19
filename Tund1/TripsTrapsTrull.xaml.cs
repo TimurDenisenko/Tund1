@@ -355,7 +355,7 @@ namespace Tund1
             {
                 await DisplayAlert("Lõpp", "P2 võit", "OK");
             }
-            StartGame();
+            StartGame(9);
         }
 
         private void CheckWin(int res)
