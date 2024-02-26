@@ -74,7 +74,7 @@ namespace Tund1
             grid.Children.Add(changeBackground, 0, 11);
             grid.Children.Add(changePlayer1, 1, 11);
             grid.Children.Add(changePlayer2, 2, 11);
-            StartGame(9);
+            StartGame();
             Content = grid;
         }
 
@@ -156,11 +156,11 @@ namespace Tund1
             }
         }
 
-        private void StartGame(int n = 3)
+        private void StartGame()
         {
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < 3; i++)
             {
-                for (int j = 0; j < n; j++)
+                for (int j = 0; j < 3; j++)
                 {
                     grid.Children.Add(
                     fr = new Frame { BackgroundColor = Color.White }, i, j
@@ -168,7 +168,7 @@ namespace Tund1
                     fr.GestureRecognizers.Add(tap);
                 }
             }
-            xo = new int[n,n];
+            xo = new int[3,3];
         }
 
         private async void ChangeBackground_Clicked(object sender, EventArgs e)
@@ -202,7 +202,6 @@ namespace Tund1
                 case true:
                     fr.BackgroundColor = p1;
                     xo[r, c] = 1;
-                    CheckWinN(9,9);
                     x = !x;
                     if (withBot)
                     {
@@ -212,7 +211,6 @@ namespace Tund1
                 case false:
                     fr.BackgroundColor = p2;
                     xo[r, c] = 10;
-                    CheckWinN(90,10);
                     x = !x;
                     break;
             }
@@ -297,67 +295,6 @@ namespace Tund1
             }
         }
 
-        private void CheckWinN(int res, int n)
-        {
-            #region PRoverka1
-            int sum = 0;
-            for (int i = 0; i < n-1; i++)
-            {
-                sum = 0;
-                int sum1 = 0;
-                for (int j = 0; j < n-1; j++)
-                {
-                    sum += xo[i,j];
-                    sum1 += xo[j, i];
-                }
-                if (sum==res)
-                {
-                    EndGameN(res, n);
-                    return;
-                }
-                if (sum1==res)
-                {
-                    EndGameN(res, n);
-                    return;
-                }
-            }
-            #endregion
-
-            #region proverka2
-            sum = 0;
-            for (int i = 0; i < n - 1; i++)
-            {
-                sum+= xo[i,i];
-            }
-            if (sum==res)
-            {
-                EndGameN(res, n);
-                return;
-            }
-            #endregion
-
-            sum = 0;
-            for (int i = 0; i < n - 1; i++)
-            {
-                for (int j = 0; j < n - 1; j++)
-                {
-                    sum+= xo[i,j];
-                }
-            }
-        }
-        private async void EndGameN(int res, int n)
-        {
-            if (res==n)
-            {
-                await DisplayAlert("Lõpp", "P1 võit", "OK");
-            }
-            else if (res==((n+1)*n))
-            {
-                await DisplayAlert("Lõpp", "P2 võit", "OK");
-            }
-            StartGame(9);
-        }
-
         private void CheckWin(int res)
         {
             for (int i = 0; i < 3; i++)
@@ -404,7 +341,7 @@ namespace Tund1
                     await DisplayAlert("Lõpp", "P1 võit", "OK");
                     break;
             }
-            StartGame(9);
+            StartGame();
         }
     }
 }
