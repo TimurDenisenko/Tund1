@@ -33,7 +33,7 @@ namespace Tund1
             swipe.Swiped += (sender, e) =>
             {
                 webView.GoBack();
-                picker.ItemDisplayBinding = new Binding("Name");
+                picker.Item
             };
             swipe1.Swiped += (sender, e) =>
             {
