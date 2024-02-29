@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
 namespace Tund1
@@ -11,47 +9,75 @@ namespace Tund1
     {
         Picker picker;
         WebView webView;
-        SwipeGestureRecognizer swipe,swipe1;
-        Frame frame;
-        string[] lehed = new string[] { "https://github.com/", "https://moodle.edu.ee/", "https://www.youtube.com/" };
+        Entry search;
+        Button home, back, forward, history;
         public PickerPage()
         {
             Title = "Picker Page";
             picker = new Picker
             {
-                Title = "Veebilehed",
-                Items = { "github", "moodle", "youtube" },
+                Title = "Ajalugu",
+                HorizontalTextAlignment = TextAlignment.Center,
             };
+            picker.SelectedIndexChanged+=Picker_SelectedIndexChanged;
             webView = new WebView
             {
-                Source = new UrlWebViewSource { Url="https://et.wikipedia.org/wiki/A" },
+                Source = new UrlWebViewSource { Url="https://tthk.ee" },
                 WidthRequest = 200,
                 HeightRequest = 700,
             };
-            swipe = new SwipeGestureRecognizer { Direction = SwipeDirection.Right};
-            swipe1 = new SwipeGestureRecognizer { Direction = SwipeDirection.Left };
-            swipe.Swiped += (sender, e) =>
+            search = new Entry
             {
-                webView.GoBack();
-                picker.Item
+                Text = "Otsing",
+                TextColor = Color.Gray, 
+                MaxLength = 20,
+                WidthRequest = 200,
+                FontSize = 16,
             };
-            swipe1.Swiped += (sender, e) =>
+            search.Focused += (sender, e) =>
             {
-                webView.GoForward();
-                picker.ItemDisplayBinding = new Binding("Name");
+                search.Text = string.Empty;
+                search.TextColor = Color.White;
             };
-            frame = new Frame
-            {
-                HeightRequest = 100,
-                WidthRequest = 100,
-                BackgroundColor = Color.Gray,
-                GestureRecognizers = {swipe},
-            };
-            picker.SelectedIndexChanged+= (sender,e) => webView.Source = new UrlWebViewSource { Url = lehed[picker.SelectedIndex] };
+            search.Unfocused+=Search_Unfocused;
             Content = new StackLayout
             {
-                Children = { picker, webView,frame },
+                Children = { picker,search, webView },
             };
+        }
+
+        private void Search_Unfocused(object sender, FocusEventArgs e)
+        {
+            if (search.Text == string.Empty)
+                return;
+            string[] list = search.Text.Split('.');
+            if (list.Length==1 || list[1].Length < 1)
+                return;
+            try
+            {
+                webView.Source = new UrlWebViewSource { Url = "https://"+search.Text };
+                picker.Items.Add(search.Text.Replace("https://", ""));
+                search.TextColor = Color.Gray;
+                search.Text = "Otsing";
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+
+        //private void WebView_Navigated(object sender, WebNavigatedEventArgs e)
+        //{
+        //    picker.SelectedItem = e.Url;
+        //}
+
+        private void Picker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string url = picker.SelectedItem as string;
+            if (!picker.Items.Contains(url))
+                picker.Items.Add(url.Replace("https://",""));
+            webView.Source = new UrlWebViewSource { Url = "https://"+url };
         }
     }
 }
