@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,21 +11,28 @@ namespace Tund1
         Picker picker;
         WebView webView;
         Entry search;
-        Button home, back, forward, history;
+        ImageButton home, back, forward;
+        StackLayout st;
         public PickerPage()
         {
             Title = "Picker Page";
             picker = new Picker
             {
                 Title = "Ajalugu",
-                HorizontalTextAlignment = TextAlignment.Center,
             };
             picker.SelectedIndexChanged+=Picker_SelectedIndexChanged;
             webView = new WebView
             {
-                Source = new UrlWebViewSource { Url="https://tthk.ee" },
+                Source = new UrlWebViewSource { Url="https://www.tthk.ee" },
                 WidthRequest = 200,
                 HeightRequest = 700,
+            };
+            webView.Navigated+=(sender,e)=> 
+            {
+                picker.Items.Add(e.Url.Replace("https://", ""));
+                picker.SelectedItem = e.Url.Replace("https://", "");
+                search.TextColor = Color.Gray;
+                search.Text = "Otsing";
             };
             search = new Entry
             {
@@ -40,9 +48,41 @@ namespace Tund1
                 search.TextColor = Color.White;
             };
             search.Unfocused+=Search_Unfocused;
+            home = new ImageButton
+            {
+                HeightRequest = 50,
+                WidthRequest = 50,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.home)),
+                BackgroundColor = Color.Transparent
+            };
+            home.Clicked += (sender,e) => 
+            {
+                webView.Source = new UrlWebViewSource { Url = "https://www.tthk.ee" };
+            };
+            back = new ImageButton
+            {
+                HeightRequest = 50,
+                WidthRequest = 50,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.back)),
+                BackgroundColor = Color.Transparent
+            };
+            back.Clicked += (sender, e) => webView.GoBack();
+            forward = new ImageButton
+            {
+                HeightRequest = 50,
+                WidthRequest = 50,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.forward)),
+                BackgroundColor = Color.Transparent
+            };
+            forward.Clicked += (sender, e) => webView.GoForward();
+            st = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                Children = {home,back, forward},
+            };
             Content = new StackLayout
             {
-                Children = { picker,search, webView },
+                Children = { picker,search,st, webView },
             };
         }
 
@@ -56,21 +96,12 @@ namespace Tund1
             try
             {
                 webView.Source = new UrlWebViewSource { Url = "https://"+search.Text };
-                picker.Items.Add(search.Text.Replace("https://", ""));
-                search.TextColor = Color.Gray;
-                search.Text = "Otsing";
             }
             catch (Exception)
             {
                 return;
             }
         }
-
-
-        //private void WebView_Navigated(object sender, WebNavigatedEventArgs e)
-        //{
-        //    picker.SelectedItem = e.Url;
-        //}
 
         private void Picker_SelectedIndexChanged(object sender, EventArgs e)
         {
