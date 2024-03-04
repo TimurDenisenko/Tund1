@@ -11,8 +11,8 @@ namespace Tund1
         Picker picker;
         WebView webView;
         Entry search;
-        ImageButton home, back, forward;
-        StackLayout st;
+        ImageButton home, back, forward, favorite, add, delete;
+        StackLayout st, st1;
         public PickerPage()
         {
             Title = "Picker Page";
@@ -30,7 +30,6 @@ namespace Tund1
             webView.Navigated+=(sender,e)=> 
             {
                 picker.Items.Add(e.Url.Replace("https://", ""));
-                picker.SelectedItem = e.Url.Replace("https://", "");
                 search.TextColor = Color.Gray;
                 search.Text = "Otsing";
             };
