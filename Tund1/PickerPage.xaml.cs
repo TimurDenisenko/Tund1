@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,6 +15,8 @@ namespace Tund1
         Entry search;
         ImageButton home, back, forward, favorite, add, delete;
         StackLayout st, st1;
+        List<string> favoriteList = new List<string>() { "www.tthk.ee/" };
+        string urlR;
         public PickerPage()
         {
             Title = "Picker Page";
@@ -32,6 +36,7 @@ namespace Tund1
                 picker.Items.Add(e.Url.Replace("https://", ""));
                 search.TextColor = Color.Gray;
                 search.Text = "Otsing";
+                urlR = e.Url.Replace("https://", "");
             };
             search = new Entry
             {
@@ -74,15 +79,67 @@ namespace Tund1
                 BackgroundColor = Color.Transparent
             };
             forward.Clicked += (sender, e) => webView.GoForward();
+            favorite = new ImageButton
+            {
+                HeightRequest = 50,
+                WidthRequest = 50,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.star)),
+                BackgroundColor = Color.Transparent,
+            };
+            favorite.Clicked+=Favorite_Clicked;
+            add = new ImageButton
+            {
+                HeightRequest = 25,
+                WidthRequest = 25,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.plus)),
+                BackgroundColor = Color.Transparent
+            };
+            add.Clicked+=Add_Clicked;
+            delete = new ImageButton
+            {
+                HeightRequest = 25,
+                WidthRequest = 25,
+                Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.minus)),
+                BackgroundColor = Color.Transparent
+            };
+            delete.Clicked+=Delete_Clicked;
+            st1 = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                Children = { add, delete },
+            };
             st = new StackLayout
             {
                 Orientation = StackOrientation.Horizontal,
-                Children = {home,back, forward},
+                Children = {home,back, forward, new Frame { WidthRequest=195, BackgroundColor = Color.Transparent } , favorite, st1},
             };
             Content = new StackLayout
             {
                 Children = { picker,search,st, webView },
             };
+        }
+
+        private async void Delete_Clicked(object sender, EventArgs e)
+        {
+            if (!favoriteList.Contains(urlR))
+                return;
+            favoriteList.Remove(urlR);
+            await DisplayAlert("Teavitus", "Sa kustutasid lehe", "OK");
+        }
+
+        private async void Add_Clicked(object sender, EventArgs e)
+        {
+            if (favoriteList.Contains(urlR))
+                return;
+           favoriteList.Add(urlR);
+           await DisplayAlert("Teavitus", "Sa lisad lehe", "OK");
+        }
+
+        private async void Favorite_Clicked(object sender, EventArgs e)
+        {
+            string action = await DisplayActionSheet("Lemmiklehed", "Tühista", null, favoriteList.ToArray());
+            if (action!="Tühista")
+                webView.Source = new UrlWebViewSource { Url = "https://"+action };
         }
 
         private void Search_Unfocused(object sender, FocusEventArgs e)
