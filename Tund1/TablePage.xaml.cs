@@ -32,7 +32,6 @@ namespace Tund1
                 WidthRequest = 50,
                 Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.tel)),
                 BackgroundColor = Color.Transparent,
-                Padding = 25
             };
             helista.Clicked+=Helista_Clicked;
             sms = new ImageButton
@@ -41,7 +40,6 @@ namespace Tund1
                 WidthRequest = 50,
                 Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.sms)),
                 BackgroundColor = Color.Transparent,
-                Padding = 25
             };
             email = new ImageButton
             {
@@ -49,7 +47,6 @@ namespace Tund1
                 WidthRequest = 50,
                 Source =  ImageSource.FromStream(() => new MemoryStream(Properties.Resources.email)),
                 BackgroundColor = Color.Transparent,
-                Padding = 25
             };
             tableView = new TableView
             {
@@ -104,9 +101,7 @@ namespace Tund1
 
         private void Helista_Clicked(object sender, EventArgs e)
         {
-            IPhoneCallTask phoneDialer = CrossMessaging.Current.PhoneDialer;
-            if (phoneDialer.CanMakePhoneCall)
-                phoneDialer.MakePhoneCall(tableView.Root[1][0].ToString());
+            
         }
 
         private void Sc_OnChanged(object sender, ToggledEventArgs e)
