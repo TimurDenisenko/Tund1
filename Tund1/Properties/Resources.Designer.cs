@@ -83,6 +83,16 @@ namespace Tund1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] estonia {
+            get {
+                object obj = ResourceManager.GetObject("estonia", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] forward {
             get {
                 object obj = ResourceManager.GetObject("forward", resourceCulture);
@@ -103,9 +113,29 @@ namespace Tund1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] iceland {
+            get {
+                object obj = ResourceManager.GetObject("iceland", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] minus {
             get {
                 object obj = ResourceManager.GetObject("minus", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] norway {
+            get {
+                object obj = ResourceManager.GetObject("norway", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -153,9 +183,29 @@ namespace Tund1.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] usa {
+            get {
+                object obj = ResourceManager.GetObject("usa", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] user {
             get {
                 object obj = ResourceManager.GetObject("user", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] white {
+            get {
+                object obj = ResourceManager.GetObject("white", resourceCulture);
                 return ((byte[])(obj));
             }
         }

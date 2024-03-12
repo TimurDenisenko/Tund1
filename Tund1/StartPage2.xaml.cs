@@ -16,7 +16,7 @@ namespace Tund1
         List<ContentPage> pages = 
             new List<ContentPage>() { new EntryPage(), new BoxViewPage(), new TimePage(), new DateTimePage(), 
             new StepperSliderPage(), new ColorSlider(), new LumememmPage(), new FramePage(), new TripsTrapsTrull(),
-            new PickerPage(), new TablePage()
+            new PickerPage(), new TablePage(), new ListPage(), new EuroopaPage(),
             };
         Button btn;
         public StartPage2()

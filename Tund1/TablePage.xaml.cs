@@ -1,14 +1,12 @@
 ﻿using Plugin.Messaging;
 using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Tund1
-{
+{ 
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TablePage : ContentPage
     {
