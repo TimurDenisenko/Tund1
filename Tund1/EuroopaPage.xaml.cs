@@ -9,6 +9,7 @@ using Plugin.Media.Abstractions;
 using Rg.Plugins.Popup;
 using Rg.Plugins.Popup.Services;
 using Rg.Plugins.Popup.Pages;
+using Android.OS;
 
 namespace Tund1
 {
