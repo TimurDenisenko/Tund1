@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Xml;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using System.Linq;
+using System.Threading.Tasks;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
+using Rg.Plugins.Popup;
+using Rg.Plugins.Popup.Services;
+using Rg.Plugins.Popup.Pages;
 
 namespace Tund1
 {
@@ -27,7 +32,7 @@ namespace Tund1
             listView = new ListView
             {
                 ItemsSource = riigid,
-                Footer = DateTime.Now.ToString("t"),
+                Footer = DateTime.Now.ToString("T"),
                 ItemTemplate = new DataTemplate(() =>
                 {
                     ImageCell ic = new ImageCell { TextColor = Color.White, DetailColor = Color.Green };
@@ -50,19 +55,21 @@ namespace Tund1
             Kustuta = new Button { Text = "Kustuta riik" };
             Kustuta.Clicked+=Kustuta_Clicked;
             this.Content = new StackLayout { Children = { lbl, listView, Lisa, Kustuta } };
+            FooterUpdate();
         }
 
         private async void ListView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             selectedRiik = e.Item as Euroopa;
             lbl.Text = selectedRiik.Nimi;
-            await DisplayAlert(selectedRiik.Nimi, $"Pealinn - {selectedRiik.Pealinn}, Rahvaarv - {selectedRiik.Rahvaarv}","Tühista");
+            await DisplayAlert(selectedRiik.Nimi, $"Pealinn - {selectedRiik.Pealinn}, Rahvaarv - {selectedRiik.Rahvaarv}", "Tühista");
         }
 
-        private void Kustuta_Clicked(object sender, EventArgs e)
+        private async void Kustuta_Clicked(object sender, EventArgs e)
         {
-            riigid.Remove(selectedRiik);
-            lbl.Text = "Euroopa riikide loetelu";
+            //riigid.Remove(selectedRiik);
+            //lbl.Text = "Euroopa riikide loetelu";
+            await PopupNavigation.Instance.PushAsync(new PopupPage { WidthRequest = 200, HeightRequest = 200 });
         }
 
         private async void Lisa_Clicked(object sender, EventArgs e)
@@ -76,10 +83,24 @@ namespace Tund1
             string rahvaarv = await DisplayPromptAsync("Rahvaarv", "Kirjuta rahvaarv", keyboard: Keyboard.Numeric);
             if (rahvaarv == null)
                 return;
-            Euroopa eur = new Euroopa(nimi, pealinn, int.Parse(rahvaarv));
+            await CrossMedia.Current.Initialize();
+            MediaFile image = await CrossMedia.Current.PickPhotoAsync();
+            Euroopa eur = new Euroopa(nimi, pealinn, int.Parse(rahvaarv), ImageSource.FromStream(()=>image.GetStream()));
             if (riigid.Any(x => x.Nimi == eur.Nimi))
                 return;
             riigid.Add(eur);
+        }
+
+        private async void FooterUpdate()
+        {
+            while (true)
+            {
+                await Task.Delay(1000);
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    listView.Footer = DateTime.Now.ToString("T");
+                });
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using Xamarin.Forms;
 
 namespace Tund1
@@ -18,6 +15,13 @@ namespace Tund1
             Pealinn=pealinn;
             Rahvaarv=rahvaarv;
             Lipp=ImageSource.FromStream(() => new MemoryStream(lipp));
+        }
+        public Euroopa(string nimi, string pealinn, int rahvaarv, ImageSource lipp)
+        {
+            Nimi=nimi;
+            Pealinn=pealinn;
+            Rahvaarv=rahvaarv;
+            Lipp=lipp;
         }
         public Euroopa(string nimi, string pealinn, int rahvaarv)
         {

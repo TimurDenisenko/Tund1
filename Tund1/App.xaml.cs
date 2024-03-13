@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Android.OS;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,7 +11,7 @@ namespace Tund1
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new StartPage2());
+            MainPage = new NavigationPage(new StartPage2()); 
         }
 
         protected override void OnStart()
